@@ -1,0 +1,39 @@
+{
+  "expo": {
+    "name": "Countdown",
+    "slug": "countdown-time-that-slips-away",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#0f1115"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": false
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#0f1115"
+      }
+    },
+    "plugins": [
+      [
+        "expo-notifications",
+        {
+          "color": "#9db4c0"
+        }
+      ],
+      "expo-font"
+    ],
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "runtimeVersion": {
+      "policy": "sdkVersion"
+    }
+  }
+}
