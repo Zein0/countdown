@@ -8,13 +8,16 @@
       "backgroundColor": "#0B0C0F"
     },
     "userInterfaceStyle": "automatic",
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": false
     },
     "plugins": [
       "expo-router",
-      "expo-notifications"
+      "expo-notifications",
+      "expo-asset"
     ],
     "experiments": {
       "typedRoutes": true
