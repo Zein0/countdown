@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocalSearchParams, useNavigation } from 'expo-router';
 import { Alert, ImageBackground, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 import { captureRef } from 'react-native-view-shot';
 import * as Sharing from 'expo-sharing';
 import Animated, { FadeInUp } from 'react-native-reanimated';
@@ -9,6 +8,7 @@ import { useEventStore } from '@/store/eventStore';
 import { calculateProgress, formatCountdownText } from '@/utils/time';
 import PrimaryButton from '@/components/PrimaryButton';
 import QuoteBlock from '@/components/QuoteBlock';
+import { BookmarkIcon, ShareIcon } from '@/components/icons';
 
 export default function EventScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -78,8 +78,23 @@ export default function EventScreen() {
           <Text style={styles.timestamp}>{new Date(event.dateTime).toLocaleString()}</Text>
           <QuoteBlock text={event.quote} />
           <View style={styles.actions}>
-            <PrimaryButton label="Share" onPress={handleShare} leading={<Ionicons name="share-outline" size={18} color="#E4F2F0" />} />
-            <PrimaryButton label={event.pinned ? 'Unpin' : 'Pin'} onPress={handlePin} leading={<Ionicons name="bookmark-outline" size={18} color="#E4F2F0" />} />
+            <PrimaryButton
+              label="Share"
+              onPress={handleShare}
+              leading={<ShareIcon size={20} color="#E4F2F0" strokeWidth={1.8} />}
+            />
+            <PrimaryButton
+              label={event.pinned ? 'Unpin' : 'Pin'}
+              onPress={handlePin}
+              leading={
+                <BookmarkIcon
+                  size={20}
+                  color="#E4F2F0"
+                  strokeWidth={1.8}
+                  fill={event.pinned ? 'rgba(228,242,240,0.18)' : 'none'}
+                />
+              }
+            />
           </View>
         </Animated.View>
       </ScrollView>
