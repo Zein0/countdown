@@ -17,7 +17,17 @@
     "plugins": [
       "expo-router",
       "expo-notifications",
-      "expo-asset"
+      "expo-asset",
+      ["expo-widget", {
+        "widgets": [
+          {
+            "name": "Stillness Countdown",
+            "family": ["systemSmall", "systemMedium"],
+            "backgroundColor": "#10141A",
+            "supportsLockScreen": true
+          }
+        ]
+      }]
     ],
     "experiments": {
       "typedRoutes": true

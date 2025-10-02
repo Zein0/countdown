@@ -1,6 +1,6 @@
 // Shared primary action button with optional leading/trailing adornments.
 import { ReactNode } from 'react';
-import { Pressable, StyleSheet, Text } from 'react-native';
+import { Pressable, StyleSheet, Text, ViewStyle, StyleProp } from 'react-native';
 
 interface PrimaryButtonProps {
   label: string;
@@ -8,14 +8,16 @@ interface PrimaryButtonProps {
   leading?: ReactNode;
   trailing?: ReactNode;
   disabled?: boolean;
+  style?: StyleProp<ViewStyle>;
 }
 
-export const PrimaryButton = ({ label, onPress, leading, trailing, disabled }: PrimaryButtonProps) => (
+export const PrimaryButton = ({ label, onPress, leading, trailing, disabled, style }: PrimaryButtonProps) => (
   <Pressable
     accessibilityRole="button"
     onPress={disabled ? undefined : onPress}
     style={({ pressed }) => [
       styles.container,
+      style,
       pressed && !disabled ? styles.pressed : null,
       disabled ? styles.disabled : null
     ]}

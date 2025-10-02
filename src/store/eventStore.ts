@@ -20,7 +20,7 @@ export interface CountdownEvent {
   backgroundImage?: string | null;
   format: CountdownFormat;
   createdAt: string;
-  progressOverride?: number | null;
+  progressEnabled: boolean;
   premiumFeatureUsed: boolean;
   notificationIds?: string[];
 }
@@ -59,7 +59,33 @@ export const useEventStore = create<EventStoreState>()(
     }),
     {
       name: 'countdown-events',
-      storage: createJSONStorage(() => AsyncStorage)
+      storage: createJSONStorage(() => AsyncStorage),
+      version: 1,
+      migrate: async (state, version) => {
+        if (!state) return state as EventStoreState;
+        const current = state as EventStoreState & { events: (CountdownEvent & { progressOverride?: number | null })[] };
+
+        if (version < 1) {
+          return {
+            ...current,
+            events: current.events.map(({ progressOverride, ...event }) => ({
+              ...event,
+              progressEnabled:
+                typeof progressOverride === 'number'
+                  ? true
+                  : event.progressEnabled ?? true
+            }))
+          };
+        }
+
+        return {
+          ...current,
+          events: current.events.map((event) => ({
+            ...event,
+            progressEnabled: event.progressEnabled ?? true
+          }))
+        };
+      }
     }
   )
 );

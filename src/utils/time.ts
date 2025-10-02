@@ -68,8 +68,8 @@ export const formatCountdownText = (event: CountdownEvent, format: CountdownForm
 };
 
 export const calculateProgress = (event: CountdownEvent, now = new Date()) => {
-  if (typeof event.progressOverride === 'number') {
-    return Math.max(0, Math.min(1, event.progressOverride));
+  if (!event.progressEnabled) {
+    return 0;
   }
 
   const target = parseDate(event.dateTime);
