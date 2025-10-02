@@ -50,6 +50,7 @@ export default function RootLayout() {
         <Stack.Screen name="index" options={{ title: 'Moments' }} />
         <Stack.Screen name="add" options={{ presentation: 'modal', title: 'New Countdown' }} />
         <Stack.Screen name="event/[id]" options={{ headerShown: false }} />
+        <Stack.Screen name="event/[id]/edit" options={{ title: 'Edit Countdown', presentation: 'modal' }} />
         <Stack.Screen name="settings" options={{ title: 'Settings' }} />
       </Stack>
     </ThemeProvider>

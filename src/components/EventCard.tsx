@@ -47,12 +47,16 @@ export const EventCard = memo(({ event, index, onPress, onTogglePin }: EventCard
           </View>
           <Text style={styles.title}>{event.title}</Text>
           <Text style={styles.countdown}>{countdownText}</Text>
-          <View style={styles.progressWrapper}>
-            <View style={styles.progressBar}>
-              <View style={[styles.progressFill, { width: `${Math.min(100, Math.max(0, progress * 100))}%` }]} />
+          {event.progressEnabled ? (
+            <View style={styles.progressWrapper}>
+              <View style={styles.progressBar}>
+                <View style={[styles.progressFill, { width: `${Math.min(100, Math.max(0, progress * 100))}%` }]} />
+              </View>
+              <Text style={styles.mood}>{event.mood}</Text>
             </View>
+          ) : (
             <Text style={styles.mood}>{event.mood}</Text>
-          </View>
+          )}
         </LinearGradient>
       </Pressable>
     </Animated.View>
