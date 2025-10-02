@@ -1,4 +1,3 @@
-// EventScreen: immersive display of a single countdown with sharing and pinning controls.
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocalSearchParams, useNavigation } from 'expo-router';
 import { Alert, ImageBackground, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -17,7 +16,7 @@ export default function EventScreen() {
   const togglePin = useEventStore((state) => state.togglePin);
   const event = useEventStore((state) => state.events.find((item) => item.id === id));
   const [now, setNow] = useState(() => new Date());
-  const viewRef = useRef<View | null>(null);
+  const viewRef = useRef<ScrollView | null>(null);
 
   useEffect(() => {
     const timer = setInterval(() => setNow(new Date()), 1000);
@@ -131,7 +130,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 34,
     color: '#F7F8FA',
-    fontFamily: 'serif'
+    fontWeight: '600'
   },
   mode: {
     color: '#95A0B2',

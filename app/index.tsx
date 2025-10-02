@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
   emptyTitle: {
     color: '#E8EDF6',
     fontSize: 24,
-    fontFamily: 'serif'
+    fontWeight: '600'
   },
   emptySubtitle: {
     color: '#96A0B1',

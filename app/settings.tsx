@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
   heading: {
     color: '#EAF3F1',
     fontSize: 32,
-    fontFamily: 'serif'
+    fontWeight: '600'
   },
   section: {
     gap: 16

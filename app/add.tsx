@@ -1,4 +1,3 @@
-// AddEventScreen: capture the details of a new countdown or count-up moment.
 import { useState } from 'react';
 import { useRouter } from 'expo-router';
 import { nanoid } from 'nanoid/non-secure';
@@ -178,7 +177,7 @@ const styles = StyleSheet.create({
   heading: {
     color: '#EAF3F1',
     fontSize: 32,
-    fontFamily: 'serif'
+    fontWeight: '600'
   },
   section: {
     gap: 12

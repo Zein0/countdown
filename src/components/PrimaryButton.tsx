@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
   label: {
     color: '#E4F2F0',
     fontSize: 18,
-    fontFamily: 'serif'
+    fontWeight: '600'
   }
 });
 

@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 22,
-    fontFamily: 'serif',
+    fontWeight: '600',
     color: '#F7F7F7'
   },
   countdown: {
