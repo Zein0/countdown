@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useRouter } from 'expo-router';
 import { nanoid } from 'nanoid/non-secure';
 import { Alert, Platform, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
-import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
+import DateTimePicker, { DateTimePickerAndroid, DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import TextField from '@/components/TextField';
 import MoodSelector from '@/components/MoodSelector';
 import FormatSelector from '@/components/FormatSelector';
@@ -35,12 +35,42 @@ export default function AddEventScreen() {
   const [saving, setSaving] = useState(false);
 
   const onChangeDate = (_event: DateTimePickerEvent, value?: Date) => {
-    if (Platform.OS === 'android') {
-      setShowDatePicker(false);
-    }
     if (value) {
       setDate(value);
     }
+  };
+
+  const openAndroidPicker = () => {
+    DateTimePickerAndroid.open({
+      mode: 'date',
+      value: date,
+      onChange: (event, selectedDate) => {
+        if (event.type !== 'set' || !selectedDate) return;
+
+        const currentDate = new Date(selectedDate);
+
+        DateTimePickerAndroid.open({
+          mode: 'time',
+          value: currentDate,
+          onChange: (timeEvent, selectedTime) => {
+            if (timeEvent.type !== 'set' || !selectedTime) return;
+
+            const finalDate = new Date(currentDate);
+            finalDate.setHours(selectedTime.getHours(), selectedTime.getMinutes(), 0, 0);
+            setDate(finalDate);
+          }
+        });
+      }
+    });
+  };
+
+  const handleDatePress = () => {
+    if (Platform.OS === 'android') {
+      openAndroidPicker();
+      return;
+    }
+
+    setShowDatePicker((prev) => !prev);
   };
 
   const disabledMoods = premiumUnlocked ? [] : ['Peaceful', 'Silent'];
@@ -112,8 +142,8 @@ export default function AddEventScreen() {
         </View>
         <View style={styles.section}>
           <Text style={styles.sectionLabel}>Date & time</Text>
-          <PrimaryButton label={date.toLocaleString()} onPress={() => setShowDatePicker(true)} />
-          {showDatePicker && (
+          <PrimaryButton label={date.toLocaleString()} onPress={handleDatePress} />
+          {Platform.OS === 'ios' && showDatePicker && (
             <DateTimePicker
               value={date}
               mode="datetime"
