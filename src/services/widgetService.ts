@@ -1,7 +1,7 @@
 import { Platform } from 'react-native';
 import type { CountdownEvent } from '@/store/eventStore';
 
-type WidgetModule = typeof import('expo-home-screen');
+type WidgetModule = typeof import('expo-widget');
 
 const WIDGET_KIND = 'stillness.countdown';
 const STORAGE_KEY = 'stillness.widget.event';
@@ -15,7 +15,7 @@ const getWidgetModule = (): WidgetModule | null => {
 
   try {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    widgetModule = require('expo-home-screen');
+    widgetModule = require('expo-widget');
     return widgetModule;
   } catch (error) {
     widgetModule = null;

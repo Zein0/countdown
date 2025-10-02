@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineWidget } from 'expo-home-screen/defineWidget';
+import { defineWidget } from 'expo-widget/defineWidget';
 import { StyleSheet, Text, View } from 'react-native';
 import { WIDGET_KIND, WIDGET_STORAGE_KEY } from '@/services/widgetService';
 

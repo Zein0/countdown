@@ -18,7 +18,7 @@
       "expo-router",
       "expo-notifications",
       "expo-asset",
-      ["expo-home-screen", {
+      ["expo-widget", {
         "widgets": [
           {
             "name": "Stillness Countdown",
