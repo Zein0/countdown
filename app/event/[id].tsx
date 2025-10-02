@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useLocalSearchParams, useNavigation } from 'expo-router';
-import { Alert, ImageBackground, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useLocalSearchParams, useNavigation, useRouter } from 'expo-router';
+import { Alert, ImageBackground, Platform, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { captureRef } from 'react-native-view-shot';
 import * as Sharing from 'expo-sharing';
 import Animated, { FadeInUp } from 'react-native-reanimated';
@@ -8,13 +8,17 @@ import { useEventStore } from '@/store/eventStore';
 import { calculateProgress, formatCountdownText } from '@/utils/time';
 import PrimaryButton from '@/components/PrimaryButton';
 import QuoteBlock from '@/components/QuoteBlock';
-import { BookmarkIcon, ShareIcon } from '@/components/icons';
+import { BookmarkIcon, PencilIcon, ShareIcon, WidgetIcon } from '@/components/icons';
+import { useSettingsStore } from '@/store/settingsStore';
+import { syncWidgetForEvent } from '@/services/widgetService';
 
 export default function EventScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const navigation = useNavigation();
+  const router = useRouter();
   const togglePin = useEventStore((state) => state.togglePin);
   const event = useEventStore((state) => state.events.find((item) => item.id === id));
+  const premiumUnlocked = useSettingsStore((state) => state.premiumUnlocked);
   const [now, setNow] = useState(() => new Date());
   const viewRef = useRef<ScrollView | null>(null);
 
@@ -59,6 +63,25 @@ export default function EventScreen() {
 
   const handlePin = () => togglePin(event.id);
 
+  const handleWidget = async () => {
+    if (!premiumUnlocked) {
+      Alert.alert('Premium required', 'Unlock Premium to place widgets on your Home or Lock Screen.');
+      return;
+    }
+
+    if (Platform.OS !== 'ios') {
+      Alert.alert('Widgets unavailable', 'Home and Lock Screen widgets are currently supported on iOS devices.');
+      return;
+    }
+
+    try {
+      await syncWidgetForEvent(event);
+      Alert.alert('Widget updated', 'Add the Stillness widget from your device widget gallery.');
+    } catch (error) {
+      Alert.alert('Unable to update widget', 'Something went wrong while preparing the widget.');
+    }
+  };
+
   const content = (
     <View style={[styles.overlay, { backgroundColor: event.backgroundImage ? 'rgba(5,7,12,0.65)' : 'transparent' }]}>
       <ScrollView contentContainerStyle={styles.container} ref={viewRef}>
@@ -70,11 +93,14 @@ export default function EventScreen() {
           <Animated.Text entering={FadeInUp.delay(200)} style={styles.countdown}>
             {countdown}
           </Animated.Text>
-          <View style={styles.progressBar}>
-            <View
-              style={[styles.progressFill, { width: `${Math.max(0, Math.min(100, progress * 100))}%` }]}
-            />
-          </View>
+          {event.progressEnabled && (
+            <View style={styles.progressBar}>
+              <View
+                style={[styles.progressFill, { width: `${Math.max(0, Math.min(100, progress * 100))}%` }]}
+              />
+            </View>
+          )}
+          <Text style={styles.moodLabel}>{event.mood}</Text>
           <Text style={styles.timestamp}>{new Date(event.dateTime).toLocaleString()}</Text>
           <QuoteBlock text={event.quote} />
           <View style={styles.actions}>
@@ -94,6 +120,16 @@ export default function EventScreen() {
                   fill={event.pinned ? 'rgba(228,242,240,0.18)' : 'none'}
                 />
               }
+            />
+            <PrimaryButton
+              label="Edit"
+              onPress={() => router.push({ pathname: '/event/[id]/edit', params: { id: event.id } })}
+              leading={<PencilIcon size={20} color="#E4F2F0" strokeWidth={1.8} />}
+            />
+            <PrimaryButton
+              label="Widget"
+              onPress={handleWidget}
+              leading={<WidgetIcon size={20} color="#E4F2F0" strokeWidth={1.8} />}
             />
           </View>
         </Animated.View>
@@ -167,12 +203,19 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     backgroundColor: '#47C2B1'
   },
+  moodLabel: {
+    color: '#8F95A5',
+    fontSize: 12,
+    letterSpacing: 2,
+    textTransform: 'uppercase'
+  },
   timestamp: {
     color: '#9AA5B6',
     fontSize: 14
   },
   actions: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: 12
   }
 });

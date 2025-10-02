@@ -52,7 +52,7 @@ export const ShareIcon = forwardRef<Svg, IconProps>(({
 ));
 ShareIcon.displayName = 'ShareIcon';
 
-export const BookmarkIcon = forwardRef<Svg, IconProps>(({
+export const BookmarkIcon = forwardRef<Svg, IconProps>(({ 
   size = 20,
   color = '#E4F2F0',
   strokeWidth = 1.8,
@@ -71,3 +71,27 @@ export const BookmarkIcon = forwardRef<Svg, IconProps>(({
   </Svg>
 ));
 BookmarkIcon.displayName = 'BookmarkIcon';
+
+export const PencilIcon = forwardRef<Svg, IconProps>(({ size = 20, color = '#E4F2F0', strokeWidth = 1.8, ...props }, ref) => (
+  <Svg ref={ref} width={size} height={size} viewBox="0 0 24 24" fill="none" {...props}>
+    <Path
+      d="M4 20h4l10.5-10.5a1.5 1.5 0 0 0 0-2.12l-2.88-2.88a1.5 1.5 0 0 0-2.12 0L4 15v5Z"
+      stroke={color}
+      strokeWidth={strokeWidth}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <Path d="M13.5 6.5 17.5 10.5" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" />
+  </Svg>
+));
+PencilIcon.displayName = 'PencilIcon';
+
+export const WidgetIcon = forwardRef<Svg, IconProps>(({ size = 20, color = '#E4F2F0', strokeWidth = 1.8, ...props }, ref) => (
+  <Svg ref={ref} width={size} height={size} viewBox="0 0 24 24" fill="none" {...props}>
+    <Path d="M4 4h7v7H4z" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" />
+    <Path d="M13 4h7v4h-7z" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" />
+    <Path d="M13 10h7v10h-7z" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" />
+    <Path d="M4 13h7v7H4z" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" />
+  </Svg>
+));
+WidgetIcon.displayName = 'WidgetIcon';
