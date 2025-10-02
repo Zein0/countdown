@@ -1,15 +1,19 @@
 // Floating action button used for composing a new countdown.
-import { Pressable, StyleSheet, Text } from 'react-native';
+import { forwardRef } from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 interface FloatingActionButtonProps {
   onPress?: () => void;
 }
 
-export const FloatingActionButton = ({ onPress }: FloatingActionButtonProps) => (
-  <Pressable accessibilityRole="button" style={styles.button} onPress={onPress}>
-    <Text style={styles.label}>＋</Text>
-  </Pressable>
+export const FloatingActionButton = forwardRef<View, FloatingActionButtonProps>(
+  ({ onPress }, ref) => (
+    <Pressable ref={ref} accessibilityRole="button" style={styles.button} onPress={onPress}>
+      <Text style={styles.label}>＋</Text>
+    </Pressable>
+  )
 );
+FloatingActionButton.displayName = 'FloatingActionButton';
 
 const styles = StyleSheet.create({
   button: {
