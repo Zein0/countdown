@@ -2,11 +2,11 @@ import { useEffect, useMemo } from 'react';
 // Home screen: lists countdown moments and provides quick access to creation & settings.
 import { Link, useNavigation, useRouter } from 'expo-router';
 import { FlatList, SafeAreaView, StyleSheet, Text, View } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 import FloatingActionButton from '@/components/FloatingActionButton';
 import EventCard from '@/components/EventCard';
 import { useEventStore } from '@/store/eventStore';
 import { useSettingsStore } from '@/store/settingsStore';
+import { SettingsIcon } from '@/components/icons';
 
 const sortEvents = (events: ReturnType<typeof useEventStore.getState>['events']) =>
   [...events].sort((a, b) => {
@@ -26,10 +26,10 @@ export default function HomeScreen() {
     navigation.setOptions({
       headerRight: () => (
         <Link href="/settings" asChild>
-          <Ionicons
-            name="settings-outline"
+          <SettingsIcon
             size={22}
             color={theme === 'dark' ? '#F2F4F7' : '#1A1D21'}
+            strokeWidth={1.8}
             style={{ marginRight: 16 }}
           />
         </Link>
