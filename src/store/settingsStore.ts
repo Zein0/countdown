@@ -45,7 +45,7 @@ export const useSettingsStore = create<SettingsState>()(
       reset: () => set({ theme: 'dark', premiumUnlocked: false, notifications: defaultNotifications })
     }),
     {
-      name: 'countdown-settings',
+      name: 'countdown-settings-v54',
       storage: createJSONStorage(() => AsyncStorage)
     }
   )

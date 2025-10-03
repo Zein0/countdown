@@ -58,7 +58,7 @@ export const useEventStore = create<EventStoreState>()(
       replaceEvents: (events) => set({ events })
     }),
     {
-      name: 'countdown-events',
+      name: 'countdown-events-v54',
       storage: createJSONStorage(() => AsyncStorage),
       version: 1,
       migrate: async (state, version) => {

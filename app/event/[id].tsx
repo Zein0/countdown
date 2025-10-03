@@ -3,7 +3,6 @@ import { useLocalSearchParams, useNavigation, useRouter } from 'expo-router';
 import { Alert, ImageBackground, Platform, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { captureRef } from 'react-native-view-shot';
 import * as Sharing from 'expo-sharing';
-import Animated, { FadeInUp } from 'react-native-reanimated';
 import { useEventStore } from '@/store/eventStore';
 import { calculateProgress, formatCountdownText } from '@/utils/time';
 import PrimaryButton from '@/components/PrimaryButton';
@@ -85,14 +84,13 @@ export default function EventScreen() {
   const content = (
     <View style={[styles.overlay, { backgroundColor: event.backgroundImage ? 'rgba(5,7,12,0.65)' : 'transparent' }]}>
       <ScrollView contentContainerStyle={styles.container} ref={viewRef}>
-        <Animated.View entering={FadeInUp.duration(900).springify()} style={[styles.card, { backgroundColor: gradient }]}
-        >
+        <View style={[styles.card, { backgroundColor: gradient }]}>
           <Text style={styles.emoji}>{event.emoji ?? '🕯️'}</Text>
           <Text style={styles.title}>{event.title}</Text>
           <Text style={styles.mode}>{event.mode === 'countdown' ? 'Counting down' : 'Counting the days since'}</Text>
-          <Animated.Text entering={FadeInUp.delay(200)} style={styles.countdown}>
+          <Text style={styles.countdown}>
             {countdown}
-          </Animated.Text>
+          </Text>
           {event.progressEnabled && (
             <View style={styles.progressBar}>
               <View
@@ -132,7 +130,7 @@ export default function EventScreen() {
               leading={<WidgetIcon size={20} color="#E4F2F0" strokeWidth={1.8} />}
             />
           </View>
-        </Animated.View>
+        </View>
       </ScrollView>
     </View>
   );

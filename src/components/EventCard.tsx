@@ -1,8 +1,7 @@
 // Home feed card summarising a countdown snapshot.
 import { memo, useMemo } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
-import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
+import { Pressable, StyleSheet, Text, View, Animated } from 'react-native';
 import { CountdownEvent } from '@/store/eventStore';
 import { calculateProgress, formatCountdownText } from '@/utils/time';
 
@@ -32,11 +31,7 @@ export const EventCard = memo(({ event, index, onPress, onTogglePin }: EventCard
   const progress = calculateProgress(event);
 
   return (
-    <Animated.View
-      entering={FadeIn.delay(index * 80).duration(500)}
-      exiting={FadeOut.duration(300)}
-      style={styles.shadow}
-    >
+    <View style={styles.shadow}>
       <Pressable onPress={onPress} style={styles.pressable} accessibilityRole="button">
         <LinearGradient colors={gradient} style={styles.card} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
           <View style={styles.headerRow}>
@@ -59,7 +54,7 @@ export const EventCard = memo(({ event, index, onPress, onTogglePin }: EventCard
           )}
         </LinearGradient>
       </Pressable>
-    </Animated.View>
+    </View>
   );
 });
 
