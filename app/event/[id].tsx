@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocalSearchParams, useNavigation, useRouter } from 'expo-router';
-import { Alert, ImageBackground, Platform, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, ImageBackground, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { captureRef } from 'react-native-view-shot';
 import * as Sharing from 'expo-sharing';
 import { useEventStore } from '@/store/eventStore';
@@ -9,7 +9,7 @@ import PrimaryButton from '@/components/PrimaryButton';
 import QuoteBlock from '@/components/QuoteBlock';
 import { BookmarkIcon, PencilIcon, ShareIcon, WidgetIcon } from '@/components/icons';
 import { useSettingsStore } from '@/store/settingsStore';
-import { syncWidgetForEvent } from '@/services/widgetService';
+import { prepareAndPresentWidget } from '@/services/widgetService';
 
 export default function EventScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -68,17 +68,46 @@ export default function EventScreen() {
       return;
     }
 
-    if (Platform.OS !== 'ios') {
-      Alert.alert('Widgets unavailable', 'Home and Lock Screen widgets are currently supported on iOS devices.');
+    const result = await prepareAndPresentWidget(event);
+
+    if (!result.ok) {
+      switch (result.reason) {
+        case 'platform':
+          Alert.alert(
+            'Widgets unavailable',
+            'Home and Lock Screen widgets are currently supported on iOS devices.'
+          );
+          break;
+        case 'module':
+          Alert.alert(
+            'Widgets unavailable',
+            'The Stillness widget is not ready yet. Reinstall the app and try again.'
+          );
+          break;
+        case 'native':
+          Alert.alert(
+            'Widgets unavailable',
+            'Widget support is missing from this build. Install the latest version of the app to continue.'
+          );
+          break;
+        default:
+          Alert.alert(
+            'Unable to update widget',
+            result.message ?? 'Something went wrong while preparing the widget.'
+          );
+      }
       return;
     }
 
-    try {
-      await syncWidgetForEvent(event);
-      Alert.alert('Widget updated', 'Add the Stillness widget from your device widget gallery.');
-    } catch (error) {
-      Alert.alert('Unable to update widget', 'Something went wrong while preparing the widget.');
+    if (result.presented) {
+      Alert.alert(
+        'Add the widget',
+        'Choose the Stillness Countdown widget in the sheet to pin it to your Home or Lock Screen.'
+      );
+      return;
     }
+
+    Alert.alert('Widget updated', 'Add the Stillness widget from your device widget gallery.');
   };
 
   const content = (
