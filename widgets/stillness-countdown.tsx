@@ -94,18 +94,26 @@ export default defineWidget(async (context) => {
   const stored = await context.getItemAsync?.(WIDGET_STORAGE_KEY);
   const event: StoredEvent | null = stored ? JSON.parse(stored) : null;
 
+  // Generate timeline entries for the next 24 hours with updates every minute
+  const now = new Date();
+  const timeline = [];
+
+  // Create timeline entries every minute for smoother updates
+  for (let i = 0; i < 60; i++) {
+    const entryDate = new Date(now.getTime() + i * 60 * 1000);
+    timeline.push({
+      date: entryDate,
+      content: () => <WidgetContent event={event} />
+    });
+  }
+
   return {
     name: 'stillness-countdown',
     displayName: 'Stillness Countdown',
     description: 'Keep your quiet moment on the Home and Lock Screen.',
     kind: WIDGET_KIND,
     supportedFamilies: ['systemSmall', 'systemMedium'],
-    timeline: [
-      {
-        date: new Date(),
-        content: () => <WidgetContent event={event} />
-      }
-    ]
+    timeline
   };
 });
 

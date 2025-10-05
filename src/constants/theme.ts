@@ -1,0 +1,125 @@
+// Theme constants for the countdown app
+
+export const COLORS = {
+  // Background colors
+  BACKGROUND_DARK: '#050608',
+  BACKGROUND_LIGHT: '#F2F4F7',
+  CARD_DARK: '#0C0F14',
+  CARD_LIGHT: '#FFFFFF',
+  CARD_SECONDARY: '#10141A',
+  CARD_BORDER: 'rgba(255,255,255,0.04)',
+  OVERLAY_DARK: 'rgba(5,7,12,0.65)',
+
+  // Text colors
+  TEXT_PRIMARY_DARK: '#F7F8FA',
+  TEXT_PRIMARY_LIGHT: '#1A1D21',
+  TEXT_SECONDARY: '#96A0B1',
+  TEXT_TERTIARY: '#8F95A5',
+  TEXT_MUTED: '#6F7A8C',
+  TEXT_HEADING: '#EAF3F1',
+  TEXT_ACCENT: '#B5F5EC',
+  TEXT_WARNING: '#E4B87A',
+
+  // Accent colors
+  ACCENT_TEAL: '#47C2B1',
+  ACCENT_SETTINGS: '#F2F4F7',
+
+  // Mood palette background colors
+  MOOD_HOPEFUL: '#1F3C3A',
+  MOOD_MELANCHOLY: '#2C2135',
+  MOOD_PEACEFUL: '#1F2A3A',
+  MOOD_SILENT: '#1A1A1A',
+  MOOD_CUSTOM_1: '#3D2F2F',
+
+  // Status colors
+  ERROR_BG: 'rgba(212,64,64,0.22)',
+  ERROR_BORDER: 'rgba(212,64,64,0.4)',
+
+  // Progress bar
+  PROGRESS_BG: 'rgba(255,255,255,0.08)',
+  PROGRESS_BG_WIDGET: 'rgba(255,255,255,0.12)',
+  PROGRESS_FILL: '#47C2B1'
+} as const;
+
+export const BACKGROUND_COLORS = [
+  COLORS.MOOD_HOPEFUL,
+  COLORS.MOOD_MELANCHOLY,
+  COLORS.MOOD_PEACEFUL,
+  COLORS.MOOD_SILENT,
+  COLORS.MOOD_CUSTOM_1
+] as const;
+
+export const MOOD_PALETTE: Record<string, string[]> = {
+  Hopeful: [COLORS.BACKGROUND_DARK, COLORS.MOOD_HOPEFUL],
+  Melancholy: [COLORS.BACKGROUND_DARK, COLORS.MOOD_MELANCHOLY],
+  Peaceful: [COLORS.BACKGROUND_DARK, COLORS.MOOD_PEACEFUL],
+  Silent: [COLORS.BACKGROUND_DARK, COLORS.MOOD_SILENT]
+};
+
+export const SPACING = {
+  XS: 4,
+  SM: 8,
+  MD: 12,
+  LG: 16,
+  XL: 24,
+  XXL: 32,
+  XXXL: 48
+} as const;
+
+export const FONT_SIZES = {
+  XS: 12,
+  SM: 13,
+  MD: 14,
+  LG: 16,
+  XL: 18,
+  XXL: 22,
+  XXXL: 24,
+  HEADING: 32,
+  DISPLAY_SM: 34,
+  DISPLAY: 48,
+  DISPLAY_LG: 64
+} as const;
+
+export const FONT_WEIGHTS = {
+  REGULAR: '400',
+  MEDIUM: '500',
+  SEMIBOLD: '600',
+  BOLD: '700'
+} as const;
+
+export const BORDER_RADIUS = {
+  SM: 6,
+  MD: 8,
+  LG: 12,
+  XL: 16,
+  XXL: 28,
+  XXXL: 32
+} as const;
+
+export const ANIMATION = {
+  DURATION_FAST: 300,
+  DURATION_NORMAL: 500,
+  DURATION_SLOW: 900,
+  STAGGER_DELAY: 80,
+  FADE_IN_DELAY: 200
+} as const;
+
+export const LAYOUT = {
+  SAFE_AREA_PADDING: 24,
+  LIST_ITEM_SEPARATOR: 24,
+  FAB_BOTTOM_OFFSET: 120,
+  ICON_SIZE_SM: 20,
+  ICON_SIZE_MD: 22,
+  ICON_STROKE_WIDTH: 1.8,
+  PROGRESS_BAR_HEIGHT: 6,
+  PROGRESS_BAR_HEIGHT_LG: 8,
+  WIDGET_PADDING: 16
+} as const;
+
+export const DEFAULTS = {
+  EMOJI: '🕯️',
+  EMPTY_STATE_EMOJI: '🕯️',
+  ERROR_EMOJI: '⚠️',
+  NOTIFICATION_HOUR: 9,
+  NOTIFICATION_MINUTE: 0
+} as const;

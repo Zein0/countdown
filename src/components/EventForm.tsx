@@ -8,9 +8,8 @@ import PrimaryButton from '@/components/PrimaryButton';
 import OptionButton from '@/components/OptionButton';
 import ColorSwatch from '@/components/ColorSwatch';
 import { CountdownFormat, CountdownMode, Mood } from '@/store/eventStore';
-import { useSettingsStore } from '@/store/settingsStore';
-
-const backgroundColors = ['#1F3C3A', '#2C2135', '#1F2A3A', '#1A1A1A', '#3D2F2F'];
+import { usePremium } from '@/hooks/usePremium';
+import { BACKGROUND_COLORS, DEFAULTS } from '@/constants/theme';
 
 export interface EventFormState {
   title: string;
@@ -37,7 +36,7 @@ interface EventFormProps {
 
 const defaultState: EventFormState = {
   title: '',
-  emoji: '🕯️',
+  emoji: DEFAULTS.EMOJI,
   dateTime: new Date(),
   mode: 'countdown',
   quote: '',
@@ -59,20 +58,18 @@ export const EventForm = ({
 }: EventFormProps) => {
   const [state, setState] = useState<EventFormState>({ ...defaultState, ...initialState });
   const [showPicker, setShowPicker] = useState(false);
-  const premiumUnlocked = useSettingsStore((form) => form.premiumUnlocked);
+  const { premiumUnlocked, disabledMoods, isPremiumMood } = usePremium();
 
   useEffect(() => {
     setState({ ...defaultState, ...initialState });
     setShowPicker(false);
   }, [initialState?.title, initialState?.emoji, initialState?.dateTime?.getTime(), initialState?.mode, initialState?.quote, initialState?.mood, initialState?.backgroundColor, initialState?.backgroundImage, initialState?.format, initialState?.progressEnabled]);
 
-  const disabledMoods = premiumUnlocked ? [] : ['Peaceful', 'Silent'];
   const premiumFeatureUsed = useMemo(
     () =>
       state.backgroundImage != null ||
-      state.mood === 'Peaceful' ||
-      state.mood === 'Silent',
-    [state.backgroundImage, state.mood]
+      isPremiumMood(state.mood),
+    [state.backgroundImage, state.mood, isPremiumMood]
   );
 
   const handleDateChange = (_event: DateTimePickerEvent, value?: Date) => {
@@ -115,7 +112,7 @@ export const EventForm = ({
       return;
     }
 
-    await onSubmit({ ...state, title: state.title.trim(), emoji: state.emoji?.trim() || '🕯️', quote: state.quote?.trim() || '' });
+    await onSubmit({ ...state, title: state.title.trim(), emoji: state.emoji?.trim() || DEFAULTS.EMOJI, quote: state.quote?.trim() || '' });
   };
 
   return (
@@ -167,7 +164,7 @@ export const EventForm = ({
       <View style={styles.section}>
         <Text style={styles.sectionLabel}>Background color</Text>
         <View style={styles.colorRow}>
-          {backgroundColors.map((color) => (
+          {BACKGROUND_COLORS.map((color) => (
             <ColorSwatch key={color} color={color} active={state.backgroundColor === color} onPress={() => setState((prev) => ({ ...prev, backgroundColor: color }))} />
           ))}
           <OptionButton label="Clear" active={!state.backgroundColor} onPress={() => setState((prev) => ({ ...prev, backgroundColor: undefined }))} />

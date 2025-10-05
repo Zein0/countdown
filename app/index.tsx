@@ -1,19 +1,33 @@
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 // Home screen: lists countdown moments and provides quick access to creation & settings.
 import { Link, useNavigation, useRouter } from 'expo-router';
 import { FlatList, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import FloatingActionButton from '@/components/FloatingActionButton';
 import EventCard from '@/components/EventCard';
-import { useEventStore } from '@/store/eventStore';
+import { useEventStore, type CountdownEvent } from '@/store/eventStore';
 import { useSettingsStore } from '@/store/settingsStore';
 import { SettingsIcon } from '@/components/icons';
 
-const sortEvents = (events: ReturnType<typeof useEventStore.getState>['events']) =>
-  [...events].sort((a, b) => {
-    if (a.pinned && !b.pinned) return -1;
-    if (!a.pinned && b.pinned) return 1;
+const sortEvents = (events: CountdownEvent[]): CountdownEvent[] => {
+  return events.slice().sort((a, b) => {
+    // Pinned items first
+    if (a.pinned !== b.pinned) {
+      return a.pinned ? -1 : 1;
+    }
+    // Then sort by date
     return new Date(a.dateTime).getTime() - new Date(b.dateTime).getTime();
   });
+};
+
+const ItemSeparator = () => <View style={{ height: 24 }} />;
+
+const EmptyListComponent = () => (
+  <View style={styles.emptyState}>
+    <Text style={styles.emptyEmoji}>🕯️</Text>
+    <Text style={styles.emptyTitle}>Nothing yet.</Text>
+    <Text style={styles.emptySubtitle}>Let time speak by creating your first countdown.</Text>
+  </View>
+);
 
 export default function HomeScreen() {
   const events = useEventStore((state) => state.events);
@@ -39,29 +53,48 @@ export default function HomeScreen() {
 
   const data = useMemo(() => sortEvents(events), [events]);
 
+  const handleEventPress = useCallback(
+    (id: string) => {
+      router.push({ pathname: '/event/[id]', params: { id } });
+    },
+    [router]
+  );
+
+  const handleTogglePin = useCallback(
+    (id: string) => {
+      togglePin(id);
+    },
+    [togglePin]
+  );
+
+  const keyExtractor = useCallback((item: CountdownEvent) => item.id, []);
+
+  const renderItem = useCallback(
+    ({ item, index }: { item: CountdownEvent; index: number }) => (
+      <EventCard
+        event={item}
+        index={index}
+        onPress={() => handleEventPress(item.id)}
+        onTogglePin={() => handleTogglePin(item.id)}
+      />
+    ),
+    [handleEventPress, handleTogglePin]
+  );
+
   return (
     <SafeAreaView style={styles.safe}>
       <FlatList
         data={data}
-        keyExtractor={(item) => item.id}
+        keyExtractor={keyExtractor}
         contentContainerStyle={[styles.list, data.length === 0 && styles.emptyList]}
-        renderItem={({ item, index }) => (
-          <EventCard
-            event={item}
-            index={index}
-            onPress={() => router.push({ pathname: '/event/[id]', params: { id: item.id } })}
-            onTogglePin={() => togglePin(item.id)}
-          />
-        )}
-        ListEmptyComponent={
-          <View style={styles.emptyState}>
-            <Text style={styles.emptyEmoji}>🕯️</Text>
-            <Text style={styles.emptyTitle}>Nothing yet.</Text>
-            <Text style={styles.emptySubtitle}>Let time speak by creating your first countdown.</Text>
-          </View>
-        }
-        ItemSeparatorComponent={() => <View style={{ height: 24 }} />}
+        renderItem={renderItem}
+        ListEmptyComponent={EmptyListComponent}
+        ItemSeparatorComponent={ItemSeparator}
         showsVerticalScrollIndicator={false}
+        removeClippedSubviews={true}
+        maxToRenderPerBatch={10}
+        updateCellsBatchingPeriod={50}
+        windowSize={10}
       />
       <Link href="/add" asChild>
         <FloatingActionButton />

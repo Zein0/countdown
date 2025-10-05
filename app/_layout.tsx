@@ -6,6 +6,7 @@ import { ThemeProvider, DarkTheme, DefaultTheme } from '@react-navigation/native
 import { StatusBar } from 'expo-status-bar';
 import { useSettingsStore } from '@/store/settingsStore';
 import { requestNotificationPermissions } from '@/services/notificationService';
+import ErrorBoundary from '@/components/ErrorBoundary';
 
 const darkPalette = {
   ...DarkTheme,
@@ -37,22 +38,24 @@ export default function RootLayout() {
   }, []);
 
   return (
-    <ThemeProvider value={theme === 'dark' ? darkPalette : lightPalette}>
-      <StatusBar style={theme === 'dark' ? 'light' : 'dark'} />
-      <Stack
-        screenOptions={{
-          headerStyle: { backgroundColor: theme === 'dark' ? '#050608' : '#FFFFFF' },
-          headerShadowVisible: false,
-          headerTintColor: theme === 'dark' ? '#F6F8FA' : '#1A1D21',
-          contentStyle: { backgroundColor: theme === 'dark' ? '#050608' : '#F2F4F7' }
-        }}
-      >
-        <Stack.Screen name="index" options={{ title: 'Moments' }} />
-        <Stack.Screen name="add" options={{ presentation: 'modal', title: 'New Countdown' }} />
-        <Stack.Screen name="event/[id]" options={{ headerShown: false }} />
-        <Stack.Screen name="event/[id]/edit" options={{ title: 'Edit Countdown', presentation: 'modal' }} />
-        <Stack.Screen name="settings" options={{ title: 'Settings' }} />
-      </Stack>
-    </ThemeProvider>
+    <ErrorBoundary>
+      <ThemeProvider value={theme === 'dark' ? darkPalette : lightPalette}>
+        <StatusBar style={theme === 'dark' ? 'light' : 'dark'} />
+        <Stack
+          screenOptions={{
+            headerStyle: { backgroundColor: theme === 'dark' ? '#050608' : '#FFFFFF' },
+            headerShadowVisible: false,
+            headerTintColor: theme === 'dark' ? '#F6F8FA' : '#1A1D21',
+            contentStyle: { backgroundColor: theme === 'dark' ? '#050608' : '#F2F4F7' }
+          }}
+        >
+          <Stack.Screen name="index" options={{ title: 'Moments' }} />
+          <Stack.Screen name="add" options={{ presentation: 'modal', title: 'New Countdown' }} />
+          <Stack.Screen name="event/[id]" options={{ headerShown: false }} />
+          <Stack.Screen name="event/[id]/edit" options={{ title: 'Edit Countdown', presentation: 'modal' }} />
+          <Stack.Screen name="settings" options={{ title: 'Settings' }} />
+        </Stack>
+      </ThemeProvider>
+    </ErrorBoundary>
   );
 }

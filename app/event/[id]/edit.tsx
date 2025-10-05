@@ -5,7 +5,7 @@ import EventForm, { EventFormState } from '@/components/EventForm';
 import { useEventStore } from '@/store/eventStore';
 import { useSettingsStore } from '@/store/settingsStore';
 import { cancelExistingNotifications, scheduleEventNotifications } from '@/services/notificationService';
-import { syncWidgetForEvent } from '@/services/widgetService';
+import { autoSyncWidgetIfNeeded, syncWidgetForEvent } from '@/services/widgetService';
 
 export default function EditEventScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -61,7 +61,7 @@ export default function EditEventScreen() {
       };
       const notificationIds = await scheduleEventNotifications(updated, notifications);
       updateEvent(event.id, { ...updated, notificationIds });
-      await syncWidgetForEvent({ ...updated, notificationIds });
+      await autoSyncWidgetIfNeeded({ ...updated, notificationIds });
       router.back();
     } finally {
       setSaving(false);

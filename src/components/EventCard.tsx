@@ -5,6 +5,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import { CountdownEvent } from '@/store/eventStore';
 import { calculateProgress, formatCountdownText } from '@/utils/time';
+import { COLORS, MOOD_PALETTE, DEFAULTS, ANIMATION, SPACING } from '@/constants/theme';
 
 interface EventCardProps {
   event: CountdownEvent;
@@ -13,17 +14,10 @@ interface EventCardProps {
   onTogglePin: () => void;
 }
 
-const moodPalette: Record<string, string[]> = {
-  Hopeful: ['#0B0C0F', '#1F3C3A'],
-  Melancholy: ['#0B0C0F', '#2C2135'],
-  Peaceful: ['#0B0C0F', '#1F2A3A'],
-  Silent: ['#0B0C0F', '#1A1A1A']
-};
-
 export const EventCard = memo(({ event, index, onPress, onTogglePin }: EventCardProps) => {
   const gradient = event.backgroundColor
-    ? [event.backgroundColor, '#0B0C0F']
-    : moodPalette[event.mood] ?? moodPalette.Melancholy;
+    ? [event.backgroundColor, COLORS.BACKGROUND_DARK]
+    : MOOD_PALETTE[event.mood] ?? MOOD_PALETTE.Melancholy;
 
   const countdownText = useMemo(
     () => formatCountdownText(event, event.format),
@@ -33,15 +27,15 @@ export const EventCard = memo(({ event, index, onPress, onTogglePin }: EventCard
 
   return (
     <Animated.View
-      entering={FadeIn.delay(index * 80).duration(500)}
-      exiting={FadeOut.duration(300)}
+      entering={FadeIn.delay(index * ANIMATION.STAGGER_DELAY).duration(ANIMATION.DURATION_NORMAL)}
+      exiting={FadeOut.duration(ANIMATION.DURATION_FAST)}
       style={styles.shadow}
     >
       <Pressable onPress={onPress} style={styles.pressable} accessibilityRole="button">
         <LinearGradient colors={gradient} style={styles.card} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
           <View style={styles.headerRow}>
-            <Text style={styles.emoji}>{event.emoji ?? '🕯️'}</Text>
-            <Pressable accessibilityRole="button" onPress={onTogglePin} hitSlop={12}>
+            <Text style={styles.emoji}>{event.emoji ?? DEFAULTS.EMOJI}</Text>
+            <Pressable accessibilityRole="button" onPress={onTogglePin} hitSlop={SPACING.MD}>
               <Text style={[styles.pin, event.pinned && styles.pinActive]}>{event.pinned ? 'Pinned' : 'Pin'}</Text>
             </Pressable>
           </View>

@@ -12,25 +12,46 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": false
+      "supportsTablet": false,
+      "bundleIdentifier": "com.zein00.countdown",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "plugins": [
       "expo-router",
       "expo-notifications",
       "expo-asset",
-      ["expo-widget", {
-        "widgets": [
-          {
-            "name": "Stillness Countdown",
-            "family": ["systemSmall", "systemMedium"],
-            "backgroundColor": "#10141A",
-            "supportsLockScreen": true
-          }
-        ]
-      }]
+      [
+        "expo-widget",
+        {
+          "widgets": [
+            {
+              "name": "Stillness Countdown",
+              "family": [
+                "systemSmall",
+                "systemMedium"
+              ],
+              "backgroundColor": "#10141A",
+              "supportsLockScreen": true
+            }
+          ]
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "d4c42b2c-66bf-4b99-bb11-f74beba93bbe"
+      }
+    },
+    "android": {
+      "package": "com.zein00.countdown"
     }
   }
 }

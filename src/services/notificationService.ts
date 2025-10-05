@@ -75,12 +75,31 @@ const scheduleAnniversaryNotification = async (event: CountdownEvent) => {
   });
 };
 
+const IOS_NOTIFICATION_LIMIT = 64;
+
+const getScheduledNotificationCount = async (): Promise<number> => {
+  const scheduled = await Notifications.getAllScheduledNotificationsAsync();
+  return scheduled.length;
+};
+
 export const scheduleEventNotifications = async (
   event: CountdownEvent,
   preferences: NotificationPreferences
 ) => {
   await requestNotificationPermissions();
   await cancelExistingNotifications(event.notificationIds);
+
+  // Check iOS notification limit
+  if (Platform.OS === 'ios') {
+    const currentCount = await getScheduledNotificationCount();
+    const potentialNewCount = currentCount + 3; // Max 3 notifications per event
+
+    if (potentialNewCount > IOS_NOTIFICATION_LIMIT) {
+      console.warn(
+        `Notification limit approaching: ${currentCount}/${IOS_NOTIFICATION_LIMIT}. Some notifications may not be scheduled.`
+      );
+    }
+  }
 
   const identifiers: string[] = [];
   const now = Date.now();
@@ -111,6 +130,16 @@ export const scheduleEventNotifications = async (
   if (preferences.anniversary && target < now) {
     const id = await scheduleAnniversaryNotification(event);
     if (id) identifiers.push(id);
+  }
+
+  // Final check after scheduling
+  if (Platform.OS === 'ios') {
+    const finalCount = await getScheduledNotificationCount();
+    if (finalCount >= IOS_NOTIFICATION_LIMIT) {
+      console.warn(
+        `iOS notification limit reached: ${finalCount}/${IOS_NOTIFICATION_LIMIT}. No more notifications can be scheduled.`
+      );
+    }
   }
 
   return identifiers;

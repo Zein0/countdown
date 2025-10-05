@@ -21,10 +21,21 @@ export default function EventScreen() {
   const premiumUnlocked = useSettingsStore((state) => state.premiumUnlocked);
   const [now, setNow] = useState(() => new Date());
   const viewRef = useRef<ScrollView | null>(null);
+  const isMountedRef = useRef(true);
 
   useEffect(() => {
-    const timer = setInterval(() => setNow(new Date()), 1000);
-    return () => clearInterval(timer);
+    isMountedRef.current = true;
+
+    const timer = setInterval(() => {
+      if (isMountedRef.current) {
+        setNow(new Date());
+      }
+    }, 1000);
+
+    return () => {
+      isMountedRef.current = false;
+      clearInterval(timer);
+    };
   }, []);
 
   useEffect(() => {
@@ -45,25 +56,36 @@ export default function EventScreen() {
   const gradient = event.backgroundColor ?? '#10141A';
 
   const handleShare = async () => {
+    if (!isMountedRef.current) return;
+
     try {
       const uri = await captureRef(viewRef, {
         format: 'png',
         result: 'tmpfile',
         quality: 1
       });
+
+      if (!isMountedRef.current) return;
+
       if (!(await Sharing.isAvailableAsync())) {
         Alert.alert('Share unavailable', 'Sharing is not available on this device.');
         return;
       }
+
+      if (!isMountedRef.current) return;
       await Sharing.shareAsync(uri, { dialogTitle: event.title });
     } catch (error) {
-      Alert.alert('Unable to share', 'Something went wrong while preparing the countdown.');
+      if (isMountedRef.current) {
+        Alert.alert('Unable to share', 'Something went wrong while preparing the countdown.');
+      }
     }
   };
 
   const handlePin = () => togglePin(event.id);
 
   const handleWidget = async () => {
+    if (!isMountedRef.current) return;
+
     if (!premiumUnlocked) {
       Alert.alert('Premium required', 'Unlock Premium to place widgets on your Home or Lock Screen.');
       return;
@@ -76,9 +98,13 @@ export default function EventScreen() {
 
     try {
       await syncWidgetForEvent(event);
+
+      if (!isMountedRef.current) return;
       Alert.alert('Widget updated', 'Add the Stillness widget from your device widget gallery.');
     } catch (error) {
-      Alert.alert('Unable to update widget', 'Something went wrong while preparing the widget.');
+      if (isMountedRef.current) {
+        Alert.alert('Unable to update widget', 'Something went wrong while preparing the widget.');
+      }
     }
   };
 

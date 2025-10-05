@@ -18,13 +18,23 @@
       ],
       "@/services/*": [
         "src/services/*"
+      ],
+      "@/constants/*": [
+        "src/constants/*"
       ]
-    }
+    },
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true
   },
   "include": [
     "**/*.ts",
     "**/*.tsx",
     ".expo/types/**/*.ts",
     "expo-env.d.ts"
+  ],
+  "exclude": [
+    "node_modules"
   ]
 }
