@@ -48,33 +48,6 @@ const scheduleSingleNotification = async (
   });
 };
 
-const scheduleAnniversaryNotification = async (event: CountdownEvent) => {
-  const target = parseDate(event.dateTime);
-  const nextAnniversary = new Date();
-  nextAnniversary.setMonth(target.getMonth(), target.getDate());
-  nextAnniversary.setHours(9, 0, 0, 0);
-  if (nextAnniversary.getTime() <= Date.now()) {
-    nextAnniversary.setFullYear(nextAnniversary.getFullYear() + 1);
-  }
-
-  return Notifications.scheduleNotificationAsync({
-    content: {
-      title: event.title,
-      body: `It has been ${buildNotificationLine(event)}. Time moves quietly.`,
-      sound: Platform.OS === 'android' ? undefined : 'default'
-    },
-    trigger: {
-      channelId: undefined,
-      year: nextAnniversary.getFullYear(),
-      month: nextAnniversary.getMonth() + 1,
-      day: nextAnniversary.getDate(),
-      hour: nextAnniversary.getHours(),
-      minute: nextAnniversary.getMinutes(),
-      repeats: true
-    }
-  });
-};
-
 const IOS_NOTIFICATION_LIMIT = 64;
 
 const getScheduledNotificationCount = async (): Promise<number> => {
@@ -92,7 +65,7 @@ export const scheduleEventNotifications = async (
   // Check iOS notification limit
   if (Platform.OS === 'ios') {
     const currentCount = await getScheduledNotificationCount();
-    const potentialNewCount = currentCount + 3; // Max 3 notifications per event
+    const potentialNewCount = currentCount + 2; // Max 2 notifications per event (daily + finalDay)
 
     if (potentialNewCount > IOS_NOTIFICATION_LIMIT) {
       console.warn(
@@ -106,30 +79,42 @@ export const scheduleEventNotifications = async (
   const target = parseDate(event.dateTime).getTime();
   const secondsUntil = Math.max(0, Math.floor((target - now) / 1000));
 
-  if (preferences.finalDay && target > now) {
-    const id = await scheduleSingleNotification(
-      event,
-      secondsUntil,
-      `It is today. ${event.quote ?? 'Breathe.'}`
-    );
-    if (id) identifiers.push(id);
-  }
+  // Only schedule notifications for future events
+  if (target > now) {
+    if (preferences.finalDay) {
+      const id = await scheduleSingleNotification(
+        event,
+        secondsUntil,
+        `It is today. ${event.quote ?? 'Breathe.'}`
+      );
+      if (id) identifiers.push(id);
+    }
 
-  if (preferences.daily && target > now) {
-    const id = await Notifications.scheduleNotificationAsync({
-      content: {
-        title: event.title,
-        body: `${buildNotificationLine(event)}. Time moves quietly.`,
-        sound: Platform.OS === 'android' ? undefined : 'default'
-      },
-      trigger: { hour: 9, minute: 0, repeats: true }
-    });
-    identifiers.push(id);
-  }
+    if (preferences.daily) {
+      // Calculate next 9 AM trigger
+      const now = new Date();
+      const nextTrigger = new Date();
+      nextTrigger.setHours(9, 0, 0, 0);
 
-  if (preferences.anniversary && target < now) {
-    const id = await scheduleAnniversaryNotification(event);
-    if (id) identifiers.push(id);
+      // If it's already past 9 AM today, schedule for tomorrow at 9 AM
+      if (nextTrigger.getTime() <= now.getTime()) {
+        nextTrigger.setDate(nextTrigger.getDate() + 1);
+      }
+
+      const id = await Notifications.scheduleNotificationAsync({
+        content: {
+          title: event.title,
+          body: `${buildNotificationLine(event)}. Time moves quietly.`,
+          sound: Platform.OS === 'android' ? undefined : 'default'
+        },
+        trigger: {
+          date: nextTrigger,
+          repeats: true,
+          type: Notifications.SchedulableTriggerInputTypes.DAILY
+        }
+      });
+      identifiers.push(id);
+    }
   }
 
   // Final check after scheduling

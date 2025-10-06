@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocalSearchParams, useNavigation, useRouter } from 'expo-router';
-import { Alert, ImageBackground, Platform, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, ImageBackground, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { captureRef } from 'react-native-view-shot';
 import * as Sharing from 'expo-sharing';
 import Animated, { FadeInUp } from 'react-native-reanimated';
@@ -103,7 +104,8 @@ export default function EventScreen() {
       Alert.alert('Widget updated', 'Add the Stillness widget from your device widget gallery.');
     } catch (error) {
       if (isMountedRef.current) {
-        Alert.alert('Unable to update widget', 'Something went wrong while preparing the widget.');
+        const errorMessage = error instanceof Error ? error.message : 'Something went wrong while preparing the widget.';
+        Alert.alert('Unable to update widget', errorMessage);
       }
     }
   };
@@ -115,7 +117,6 @@ export default function EventScreen() {
         >
           <Text style={styles.emoji}>{event.emoji ?? '🕯️'}</Text>
           <Text style={styles.title}>{event.title}</Text>
-          <Text style={styles.mode}>{event.mode === 'countdown' ? 'Counting down' : 'Counting the days since'}</Text>
           <Animated.Text entering={FadeInUp.delay(200)} style={styles.countdown}>
             {countdown}
           </Animated.Text>

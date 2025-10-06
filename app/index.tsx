@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useMemo } from 'react';
 // Home screen: lists countdown moments and provides quick access to creation & settings.
 import { Link, useNavigation, useRouter } from 'expo-router';
-import { FlatList, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import FloatingActionButton from '@/components/FloatingActionButton';
 import EventCard from '@/components/EventCard';
 import { useEventStore, type CountdownEvent } from '@/store/eventStore';

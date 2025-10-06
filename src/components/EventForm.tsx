@@ -121,14 +121,6 @@ export const EventForm = ({
       <TextField label="Title" value={state.title} onChangeText={(title) => setState((prev) => ({ ...prev, title }))} placeholder="When we met" />
       <TextField label="Emoji" value={state.emoji ?? ''} onChangeText={(emoji) => setState((prev) => ({ ...prev, emoji }))} maxLength={2} />
       <View style={styles.section}>
-        <Text style={styles.sectionLabel}>Mode</Text>
-        <View style={styles.modeRow}>
-          {(['countdown', 'countup'] as CountdownMode[]).map((item) => (
-            <OptionButton key={item} label={item === 'countdown' ? 'Countdown' : 'Count Up'} active={state.mode === item} onPress={() => setState((prev) => ({ ...prev, mode: item }))} />
-          ))}
-        </View>
-      </View>
-      <View style={styles.section}>
         <Text style={styles.sectionLabel}>Date & time</Text>
         <PrimaryButton
           label={state.dateTime.toLocaleString()}

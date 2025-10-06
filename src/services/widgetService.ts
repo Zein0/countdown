@@ -1,4 +1,5 @@
 import { Platform } from 'react-native';
+import Constants from 'expo-constants';
 import type { CountdownEvent } from '@/store/eventStore';
 
 interface WidgetModule {
@@ -76,7 +77,11 @@ export const syncWidgetForEvent = async (
 
   const module = getWidgetModule();
   if (!module) {
-    throw new Error('Widget module is not available');
+    const isExpoGo = Constants.appOwnership === 'expo';
+    const errorMessage = isExpoGo
+      ? 'Widgets are not supported in Expo Go. Please create a development build to test widgets.'
+      : 'Widget module is not available';
+    throw new Error(errorMessage);
   }
 
   try {

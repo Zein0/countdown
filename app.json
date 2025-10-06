@@ -2,6 +2,7 @@
   "expo": {
     "name": "Countdown — The Time That Slips Away",
     "slug": "countdown",
+    "scheme": "countdown",
     "version": "1.0.0",
     "orientation": "portrait",
     "splash": {
@@ -27,7 +28,9 @@
         {
           "widgets": [
             {
-              "name": "Stillness Countdown",
+              "name": "stillness-countdown",
+              "displayName": "Stillness Countdown",
+              "kind": "stillness.countdown",
               "family": [
                 "systemSmall",
                 "systemMedium"

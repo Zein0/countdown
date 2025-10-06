@@ -1,6 +1,7 @@
 // SettingsScreen: manage appearance, reminders, and premium unlock flow.
 import { useState } from 'react';
-import { SafeAreaView, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSettingsStore } from '@/store/settingsStore';
 import PrimaryButton from '@/components/PrimaryButton';
 import { purchasePremium } from '@/services/premiumService';
@@ -40,9 +41,9 @@ export default function SettingsScreen() {
         </View>
         <View style={styles.section}>
           <Text style={styles.sectionLabel}>Notifications</Text>
-          {(['daily', 'finalDay', 'anniversary'] as const).map((key) => (
+          {(['daily', 'finalDay'] as const).map((key) => (
             <View key={key} style={styles.row}>
-              <Text style={styles.itemLabel}>{key === 'daily' ? 'Daily' : key === 'finalDay' ? 'Final day' : 'Anniversary'}</Text>
+              <Text style={styles.itemLabel}>{key === 'daily' ? 'Daily' : 'Final day'}</Text>
               <Switch
                 value={notifications[key]}
                 onValueChange={() => toggleNotification(key)}

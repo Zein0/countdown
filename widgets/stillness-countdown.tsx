@@ -1,7 +1,6 @@
 import React from 'react';
 import { defineWidget } from 'expo-widget/defineWidget';
 import { StyleSheet, Text, View } from 'react-native';
-import { WIDGET_KIND, WIDGET_STORAGE_KEY } from '@/services/widgetService';
 
 type StoredEvent = {
   id: string;
@@ -24,12 +23,17 @@ const pad = (value: number) => value.toString().padStart(2, '0');
 
 const buildCountdown = (event: StoredEvent, now: Date) => {
   const target = new Date(event.dateTime);
+
+  // If event has passed, show "Event reached"
+  if (target.getTime() < now.getTime()) {
+    return 'Event reached';
+  }
+
   const diff = Math.abs(target.getTime() - now.getTime());
-  const direction = event.mode === 'countdown' && target.getTime() >= now.getTime() ? 'left' : 'since';
 
   if (event.format === 'seconds') {
     const totalSeconds = Math.floor(diff / SECOND);
-    return `${totalSeconds.toLocaleString()} seconds ${direction}`;
+    return `${totalSeconds.toLocaleString()} seconds left`;
   }
 
   const days = Math.floor(diff / DAY);
@@ -38,19 +42,25 @@ const buildCountdown = (event: StoredEvent, now: Date) => {
   const seconds = Math.floor((diff % MINUTE) / SECOND);
 
   if (event.format === 'relative') {
-    if (days) return `${days} day${days === 1 ? '' : 's'} ${direction}`;
-    if (hours) return `${hours} hour${hours === 1 ? '' : 's'} ${direction}`;
-    if (minutes) return `${minutes} minute${minutes === 1 ? '' : 's'} ${direction}`;
+    if (days) return `${days} day${days === 1 ? '' : 's'} left`;
+    if (hours) return `${hours} hour${hours === 1 ? '' : 's'} left`;
+    if (minutes) return `${minutes} minute${minutes === 1 ? '' : 's'} left`;
     return 'moments';
   }
 
-  return `${days}d · ${pad(hours)}h ${pad(minutes)}m ${pad(seconds)}s ${direction}`;
+  return `${days}d · ${pad(hours)}h ${pad(minutes)}m ${pad(seconds)}s left`;
 };
 
 const calculateProgress = (event: StoredEvent, now: Date) => {
   if (!event.progressEnabled) return 0;
   const createdAt = new Date(event.createdAt);
   const target = new Date(event.dateTime);
+
+  // If event has passed, show 100% progress
+  if (target.getTime() <= now.getTime()) {
+    return 1;
+  }
+
   const total = target.getTime() - createdAt.getTime();
   if (total <= 0) return 0;
   const elapsed = Math.max(0, now.getTime() - createdAt.getTime());
@@ -89,6 +99,9 @@ const WidgetContent = ({ event }: { event: StoredEvent | null }) => {
     </View>
   );
 };
+
+const WIDGET_STORAGE_KEY = 'stillness.widget.event';
+const WIDGET_KIND = 'stillness.countdown';
 
 export default defineWidget(async (context) => {
   const stored = await context.getItemAsync?.(WIDGET_STORAGE_KEY);

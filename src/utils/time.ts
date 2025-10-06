@@ -50,21 +50,26 @@ const buildRelativeText = ({ years, months, days, hours, minutes }: ReturnType<t
 
 export const formatCountdownText = (event: CountdownEvent, format: CountdownFormat, now = new Date()) => {
   const target = parseDate(event.dateTime);
+
+  // If event has passed, show "Event reached"
+  if (target.getTime() < now.getTime()) {
+    return 'Event reached';
+  }
+
   const { diff, ...parts } = getTimeParts(target, now);
-  const direction = event.mode === 'countdown' && target.getTime() >= now.getTime() ? 'left' : 'since';
 
   if (format === 'seconds') {
     const totalSeconds = Math.floor(diff / SECOND);
-    return `${totalSeconds.toLocaleString()} seconds ${direction}`;
+    return `${totalSeconds.toLocaleString()} seconds left`;
   }
 
   if (format === 'relative') {
     const text = buildRelativeText({ diff, ...parts });
-    return `${text} ${direction}`;
+    return `${text} left`;
   }
 
   const text = buildPreciseText({ diff, ...parts });
-  return `${text} ${direction}`;
+  return `${text} left`;
 };
 
 export const calculateProgress = (event: CountdownEvent, now = new Date()) => {
@@ -73,7 +78,9 @@ export const calculateProgress = (event: CountdownEvent, now = new Date()) => {
   }
 
   const target = parseDate(event.dateTime);
-  if (event.mode === 'countup' && target.getTime() <= now.getTime()) {
+
+  // If event has passed, show 100% progress
+  if (target.getTime() <= now.getTime()) {
     return 1;
   }
 

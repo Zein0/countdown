@@ -8,7 +8,6 @@ export type ThemePreference = 'dark' | 'light';
 export interface NotificationPreferences {
   daily: boolean;
   finalDay: boolean;
-  anniversary: boolean;
 }
 
 interface SettingsState {
@@ -23,8 +22,7 @@ interface SettingsState {
 
 const defaultNotifications: NotificationPreferences = {
   daily: false,
-  finalDay: true,
-  anniversary: true
+  finalDay: true
 };
 
 export const useSettingsStore = create<SettingsState>()(

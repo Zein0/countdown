@@ -2,10 +2,9 @@
 import { memo, useMemo } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import { CountdownEvent } from '@/store/eventStore';
 import { calculateProgress, formatCountdownText } from '@/utils/time';
-import { COLORS, MOOD_PALETTE, DEFAULTS, ANIMATION, SPACING } from '@/constants/theme';
+import { COLORS, MOOD_PALETTE, DEFAULTS, SPACING } from '@/constants/theme';
 
 interface EventCardProps {
   event: CountdownEvent;
@@ -26,11 +25,7 @@ export const EventCard = memo(({ event, index, onPress, onTogglePin }: EventCard
   const progress = calculateProgress(event);
 
   return (
-    <Animated.View
-      entering={FadeIn.delay(index * ANIMATION.STAGGER_DELAY).duration(ANIMATION.DURATION_NORMAL)}
-      exiting={FadeOut.duration(ANIMATION.DURATION_FAST)}
-      style={styles.shadow}
-    >
+    <View style={styles.shadow}>
       <Pressable onPress={onPress} style={styles.pressable} accessibilityRole="button">
         <LinearGradient colors={gradient} style={styles.card} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
           <View style={styles.headerRow}>
@@ -53,7 +48,7 @@ export const EventCard = memo(({ event, index, onPress, onTogglePin }: EventCard
           )}
         </LinearGradient>
       </Pressable>
-    </Animated.View>
+    </View>
   );
 });
 
