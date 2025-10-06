@@ -85,26 +85,33 @@ export default function EventScreen() {
   const handlePin = () => togglePin(event.id);
 
   const handleWidget = async () => {
+    console.log('[EventScreen] handleWidget called');
     if (!isMountedRef.current) return;
 
+    console.log('[EventScreen] Premium unlocked:', premiumUnlocked);
     if (!premiumUnlocked) {
       Alert.alert('Premium required', 'Unlock Premium to place widgets on your Home or Lock Screen.');
       return;
     }
 
+    console.log('[EventScreen] Platform:', Platform.OS);
     if (Platform.OS !== 'ios') {
       Alert.alert('Widgets unavailable', 'Home and Lock Screen widgets are currently supported on iOS devices.');
       return;
     }
 
+    console.log('[EventScreen] About to call syncWidgetForEvent with event:', event.id);
     try {
       await syncWidgetForEvent(event);
 
+      console.log('[EventScreen] syncWidgetForEvent completed successfully');
       if (!isMountedRef.current) return;
       Alert.alert('Widget updated', 'Add the Stillness widget from your device widget gallery.');
     } catch (error) {
+      console.error('[EventScreen] Error in handleWidget:', error);
       if (isMountedRef.current) {
         const errorMessage = error instanceof Error ? error.message : 'Something went wrong while preparing the widget.';
+        console.error('[EventScreen] Showing error alert:', errorMessage);
         Alert.alert('Unable to update widget', errorMessage);
       }
     }

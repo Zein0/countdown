@@ -104,30 +104,45 @@ const WIDGET_STORAGE_KEY = 'stillness.widget.event';
 const WIDGET_KIND = 'stillness.countdown';
 
 export default defineWidget(async (context) => {
-  const stored = await context.getItemAsync?.(WIDGET_STORAGE_KEY);
-  const event: StoredEvent | null = stored ? JSON.parse(stored) : null;
+  console.log('[Widget Definition] Widget task handler called');
+  console.log('[Widget Definition] Context:', context);
 
-  // Generate timeline entries for the next 24 hours with updates every minute
-  const now = new Date();
-  const timeline = [];
+  try {
+    console.log('[Widget Definition] Attempting to get stored data with key:', WIDGET_STORAGE_KEY);
+    const stored = await context.getItemAsync?.(WIDGET_STORAGE_KEY);
+    console.log('[Widget Definition] Stored data retrieved:', stored);
 
-  // Create timeline entries every minute for smoother updates
-  for (let i = 0; i < 60; i++) {
-    const entryDate = new Date(now.getTime() + i * 60 * 1000);
-    timeline.push({
-      date: entryDate,
-      content: () => <WidgetContent event={event} />
-    });
+    const event: StoredEvent | null = stored ? JSON.parse(stored) : null;
+    console.log('[Widget Definition] Parsed event:', event?.id);
+
+    // Generate timeline entries for the next 24 hours with updates every minute
+    const now = new Date();
+    const timeline = [];
+
+    // Create timeline entries every minute for smoother updates
+    for (let i = 0; i < 60; i++) {
+      const entryDate = new Date(now.getTime() + i * 60 * 1000);
+      timeline.push({
+        date: entryDate,
+        content: () => <WidgetContent event={event} />
+      });
+    }
+
+    console.log('[Widget Definition] Timeline created with', timeline.length, 'entries');
+
+    return {
+      name: 'stillness-countdown',
+      displayName: 'Stillness Countdown',
+      description: 'Keep your quiet moment on the Home and Lock Screen.',
+      kind: WIDGET_KIND,
+      supportedFamilies: ['systemSmall', 'systemMedium'],
+      timeline
+    };
+  } catch (error) {
+    console.error('[Widget Definition] Error in widget task handler:', error);
+    console.error('[Widget Definition] Error stack:', (error as Error).stack);
+    throw error;
   }
-
-  return {
-    name: 'stillness-countdown',
-    displayName: 'Stillness Countdown',
-    description: 'Keep your quiet moment on the Home and Lock Screen.',
-    kind: WIDGET_KIND,
-    supportedFamilies: ['systemSmall', 'systemMedium'],
-    timeline
-  };
 });
 
 const styles = StyleSheet.create({
